@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from 'generated/prisma';
 import { RedisService } from 'src/redis/redis.service';
 import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -12,12 +12,13 @@ export class UserService {
   private readonly prismaService: PrismaService;
   @Inject(RedisService)
   private readonly redisService: RedisService;
+  @Inject(JwtService)
+  private readonly jwtService: JwtService;
 
   REGISTER_REDIS_KEY = 'register_captcha_';
   SALT_ROUNDS = 10;
 
   async create(data: CreateUserDto) {
-    console.log('🚀 ~ UserService ~ create ~ data:', data);
     const captcha = await this.redisService.get(
       this.REGISTER_REDIS_KEY + data.email,
     );
@@ -62,19 +63,30 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async login(data: LoginUserDto) {
+    const foundUser = await this.prismaService.user.findUnique({
+      where: {
+        username: data.username,
+      },
+    });
+    if (!foundUser) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
+    const validPassword = await bcrypt.compare(
+      data.password,
+      foundUser.password,
+    );
+    if (!validPassword) {
+      throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
+    }
+    const token = this.jwtService.sign({
+      id: foundUser.id,
+      username: foundUser.username,
+    });
+    const { password, ...safeUser } = foundUser;
+    return {
+      user: safeUser,
+      token,
+    };
   }
 }
