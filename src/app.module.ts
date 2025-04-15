@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { RedisModule } from './redis/redis.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './common/guard/auth/auth.guard';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthGuard } from './common/guard/auth/auth.guard';
         };
       },
     }),
+    FriendshipModule,
   ],
   controllers: [AppController],
   providers: [

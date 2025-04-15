@@ -128,6 +128,21 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.FriendshipScalarFieldEnum = {
+  userId: 'userId',
+  friendId: 'friendId'
+};
+
+exports.Prisma.FriendRequestScalarFieldEnum = {
+  id: 'id',
+  fromUserId: 'fromUserId',
+  toUserId: 'toUserId',
+  reason: 'reason',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -141,9 +156,15 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
   headPic: 'headPic'
 };
 
+exports.Prisma.FriendRequestOrderByRelevanceFieldEnum = {
+  reason: 'reason'
+};
+
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Friendship: 'Friendship',
+  FriendRequest: 'FriendRequest'
 };
 
 /**

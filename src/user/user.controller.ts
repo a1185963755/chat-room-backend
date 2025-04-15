@@ -26,8 +26,8 @@ export class UserController {
   }
 
   @RequireLogin()
-  @Get('aaa')
-  findAll(@UserInfo() user) {
-    return user;
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
   }
 }

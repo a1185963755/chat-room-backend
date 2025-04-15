@@ -5,6 +5,7 @@ import { RedisService } from 'src/redis/redis.service';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class UserService {
@@ -88,5 +89,21 @@ export class UserService {
       user: safeUser,
       token,
     };
+  }
+
+  async findOne(id: number) {
+    const foundUser = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        username: true,
+        nickname: true,
+        email: true,
+        headPic: true,
+      },
+    });
+    return foundUser;
   }
 }
