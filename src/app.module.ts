@@ -7,6 +7,8 @@ import { RedisModule } from './redis/redis.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './common/guard/auth/auth.guard';
 import { FriendshipModule } from './friendship/friendship.module';
+import { ChatroomModule } from './chatroom/chatroom.module';
+import { HttpInterceptor } from './common/interceptor/http.interceptor';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { FriendshipModule } from './friendship/friendship.module';
       },
     }),
     FriendshipModule,
+    ChatroomModule,
   ],
   controllers: [AppController],
   providers: [
@@ -32,6 +35,10 @@ import { FriendshipModule } from './friendship/friendship.module';
     {
       provide: 'APP_GUARD',
       useClass: AuthGuard,
+    },
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: HttpInterceptor,
     },
   ],
 })
