@@ -74,6 +74,10 @@ export class FriendshipService {
           {
             userId,
             friendId: +friendId,
+          }, //用户A与用户B之间
+          {
+            userId: +friendId,
+            friendId: userId,
           },
         ],
       },
@@ -88,6 +92,7 @@ export class FriendshipService {
           {
             fromUserId: userId,
             toUserId: +friendId,
+            status: 0,
           },
         ],
       },
@@ -108,7 +113,14 @@ export class FriendshipService {
   async getFriendRequest(userId: number) {
     return await this.prismaService.friendRequest.findMany({
       where: {
-        fromUserId: userId,
+        OR: [
+          {
+            fromUserId: userId,
+          },
+          {
+            toUserId: userId,
+          },
+        ],
       },
     });
   }
