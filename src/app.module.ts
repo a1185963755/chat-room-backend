@@ -9,6 +9,8 @@ import { AuthGuard } from './common/guard/auth/auth.guard';
 import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
 import { HttpInterceptor } from './common/interceptor/http.interceptor';
+import { ChatModule } from './chat/chat.module';
+import { ChatHistoryModule } from './chat-history/chat-history.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { HttpInterceptor } from './common/interceptor/http.interceptor';
     }),
     FriendshipModule,
     ChatroomModule,
+    ChatModule,
+    ChatHistoryModule,
   ],
   controllers: [AppController],
   providers: [
