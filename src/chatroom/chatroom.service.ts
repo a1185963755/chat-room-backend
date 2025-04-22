@@ -6,9 +6,12 @@ export class ChatroomService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
   async createOneToOneChatroom(friendId: number, userId: number) {
+    const friend = await this.prismaService.user.findUnique({
+      where: { id: friendId },
+    });
     const { id } = await this.prismaService.chatroom.create({
       data: {
-        name: `chatroom-${Math.random().toString(36).substring(2)}`,
+        name: `和${friend?.nickname}的群聊`,
         type: 1,
       },
       select: {
@@ -27,7 +30,7 @@ export class ChatroomService {
         chatroomId: id,
       },
     });
-    return '创建成功';
+    return id;
   }
 
   async createGroupChatroom(name: string, userId: number) {
@@ -72,10 +75,24 @@ export class ChatroomService {
           chatroomId: item.id,
         },
       });
+      const members = await this.prismaService.user.findMany({
+        where: {
+          id: {
+            in: userChatrooms.map((item) => item.userId),
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          nickname: true,
+          email: true,
+          headPic: true,
+        },
+      });
       res.push({
         ...item,
         membersCount: userChatrooms.length,
-        membersIds: userChatrooms.map((item) => item.userId),
+        members,
       });
     }
 
@@ -146,7 +163,7 @@ export class ChatroomService {
       },
     });
     if (isInChatroom) {
-      throw new HttpException('你已经在聊天室中', 404);
+      throw new HttpException('已经在聊天室中', 404);
     }
     await this.prismaService.userChatroom.create({
       data: {
@@ -185,5 +202,35 @@ export class ChatroomService {
       },
     });
     return '退出成功';
+  }
+
+  async findOneToOneChatroom(userId: number, friendId: number) {
+    const chatroom1 = await this.prismaService.userChatroom.findMany({
+      where: {
+        userId,
+      },
+    });
+    const chatroom2 = await this.prismaService.userChatroom.findMany({
+      where: {
+        userId: friendId,
+      },
+    });
+    let res = -1;
+    for (const item of chatroom1) {
+      const chatroom = await this.prismaService.chatroom.findUnique({
+        where: {
+          id: item.chatroomId,
+        },
+      });
+      if (!chatroom || chatroom.type !== 1) {
+        continue;
+      }
+      const found = chatroom2.find((item2) => item2.chatroomId === chatroom.id);
+      if (found) {
+        res = found.chatroomId;
+        break;
+      }
+    }
+    return res;
   }
 }

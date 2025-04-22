@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { ChatHistoryService } from './chat-history.service';
 import { RequireLogin } from 'src/common/decorator/custom.decorator';
 import { CreateChatHistoryDto } from './dto/create-chat-history.dto';
@@ -9,7 +9,7 @@ export class ChatHistoryController {
   constructor(private readonly chatHistoryService: ChatHistoryService) {}
 
   @Get('list')
-  async getChatHistory(chatroomId: number) {
+  async getChatHistory(@Query('chatroomId') chatroomId: number) {
     return this.chatHistoryService.getChatHistory(chatroomId);
   }
 

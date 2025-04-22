@@ -13,9 +13,12 @@ interface JoinRoomPayload {
   chatroomId: number;
   userId: number;
 }
-
+interface LeaveRoomPayload {
+  chatroomId: number;
+  userId: number;
+}
 interface SendMessagePayload {
-  sendUserId: number;
+  senderId: number;
   chatroomId: number;
   message: {
     type: 'text' | 'image';
@@ -38,7 +41,20 @@ export class ChatGateway {
     client.join(chatroomId);
     this.server.to(chatroomId).emit('message', {
       type: 'joinRoom',
-      userId: payload.userId,
+      senderId: payload.userId,
+      time: Date.now(),
+    });
+  }
+
+  @SubscribeMessage('leaveRoom')
+  leaveRoom(client: Socket, payload: LeaveRoomPayload) {
+    const chatroomId = payload.chatroomId.toString();
+    client.join(chatroomId);
+    this.server.to(chatroomId).emit('message', {
+      type: 'leaveRoom',
+      senderId: payload.userId,
+      time: Date.now(),
+      chatroomId: payload.chatroomId,
     });
   }
 
@@ -49,13 +65,14 @@ export class ChatGateway {
       content: payload.message.content,
       type: payload.message.type === 'image' ? 1 : 0,
       chatroomId: payload.chatroomId,
-      senderId: payload.sendUserId,
+      senderId: payload.senderId,
     });
 
     this.server.to(chatroomId).emit('message', {
       type: 'sendMessage',
-      userId: payload.sendUserId,
+      senderId: payload.senderId,
       message: payload.message,
+      time: Date.now(),
     });
   }
 }

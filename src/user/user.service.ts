@@ -5,7 +5,6 @@ import { RedisService } from 'src/redis/redis.service';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class UserService {
@@ -105,5 +104,36 @@ export class UserService {
       },
     });
     return foundUser;
+  }
+
+  async searchUsers(keyword: string, userId: number) {
+    const currentUser = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: { username: true, nickname: true },
+    });
+    // 直接返回查询结果
+    return await this.prismaService.user.findMany({
+      where: {
+        OR: [
+          {
+            username: {
+              contains: keyword,
+              ...(currentUser && { not: { contains: currentUser.username } }),
+            },
+          },
+          {
+            nickname: {
+              contains: keyword,
+              ...(currentUser && { not: { contains: currentUser.nickname } }),
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        username: true,
+        nickname: true,
+      },
+    });
   }
 }

@@ -8,7 +8,11 @@ export class ChatHistoryService {
   private readonly prismaService: PrismaService;
 
   async getChatHistory(chatroomId: number) {
-    const result = await this.prismaService.chatHistory.findMany({
+    console.log(
+      '🚀 ~ ChatHistoryService ~ getChatHistory ~ chatroomId:',
+      chatroomId,
+    );
+    const history = await this.prismaService.chatHistory.findMany({
       where: {
         chatroomId,
       },
@@ -28,11 +32,11 @@ export class ChatHistoryService {
         },
       });
       res.push({
-        ...result[i],
+        ...history[i],
         sender: user,
       });
     }
-    return result;
+    return res;
   }
 
   async createChatHistory(createChatHistoryDto: CreateChatHistoryDto) {
