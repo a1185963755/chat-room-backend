@@ -11,6 +11,7 @@ import { ChatroomModule } from './chatroom/chatroom.module';
 import { HttpInterceptor } from './common/interceptor/http.interceptor';
 import { ChatModule } from './chat/chat.module';
 import { ChatHistoryModule } from './chat-history/chat-history.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ChatHistoryModule } from './chat-history/chat-history.module';
     ChatroomModule,
     ChatModule,
     ChatHistoryModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [

@@ -166,6 +166,14 @@ exports.Prisma.ChatHistoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.FavoriteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  chatHistoryId: 'chatHistoryId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -198,7 +206,8 @@ exports.Prisma.ModelName = {
   FriendRequest: 'FriendRequest',
   Chatroom: 'Chatroom',
   UserChatroom: 'UserChatroom',
-  ChatHistory: 'ChatHistory'
+  ChatHistory: 'ChatHistory',
+  Favorite: 'Favorite'
 };
 
 /**
